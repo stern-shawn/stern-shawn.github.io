@@ -1,10 +1,8 @@
 ---
 layout: post
-title: You're up and running!
+title: First Blog Post!
 ---
 
-Next you can update your site name, avatar and other options using the _config.yml file in the root of your repository (shown below).
+Well, it looks like I've finally done it and hopped into the fray of software development. At a recent ReactJS meetup I heard that the next logical course of action was to start blogging about it, and I'm really in dire need of some sort of journal to keep tabs on my work, so here we are! I'll be retroactively documenting some of the projects I've been working on at [FreeCodeCamp](freecodecamp.com) the last couple weeks and keeping tabs on future work here as well.
 
-![_config.yml]({{ site.baseurl }}/images/config.png)
-
-The easiest way to make your first post is to edit this one. Go into /_posts/ and update the Hello World markdown file. For more instructions head over to the [Jekyll Now repository](https://github.com/barryclark/jekyll-now) on GitHub.
+Into the rabbit hole we go...

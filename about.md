@@ -4,11 +4,12 @@ title: About
 permalink: /about/
 ---
 
-Hello! My name is Shawn and I primarily specialize in designing Embedded Microsystems. While my major was Electrical Engineering, I noticed that my love of problem solving really went wild... during my computer science prerequisites and algorithm classes. Luckily I was able to enjoy combined hardware and software design during undergrad, but once out in the industry, I found myself moving further and further away from my hardware roots and solving problems within my team by generating novel Perl and Python scripts to improve workflows.
+Hello! My name is Shawn and I primarily specialize in designing Embedded Microsystems. While my major was Electrical Engineering, I noticed that my love of problem solving really went wild... during my _computer science_ prerequisites and algorithm classes. Luckily I was able to enjoy combined hardware and software design during undergrad, but once out in the industry, I found myself moving further and further away from my hardware roots and solving problems within my team by generating novel Perl and Python scripts.
 
 In June 2016 I decided to separate from Intel and focus full-time on expanding my knowledge of software development, particularly within the realm of full-stack web development as it offers a wealth of problems to solve and allows me to create code which people can interact with.
 
 Hobbies outside of programming include:
+
 - Powerlifting
 - Kendo
 - Playing Electric Bass Guitar for my band
@@ -17,7 +18,7 @@ Hobbies outside of programming include:
 
 ### More Information
 
-If you want to view more of my work, you can find my personal web development portfolio [here](stern-shawn.github.io/Portfolio). My full github repository is also available [here](https://github.com/stern-shawn)!
+If you want to view more of my work, you can find my personal web development portfolio at <http://stern-shawn.github.io/Portfolio>. My full github repository is also available at <https://github.com/stern-shawn>!
 
 ### Contact me
 

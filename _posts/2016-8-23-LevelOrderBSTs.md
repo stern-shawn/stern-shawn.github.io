@@ -38,7 +38,7 @@ levelorder(root)
       q.enqueue(node.right)
 ```
 
-Look at that, we aren't even recursing! Instead, this solution relies on a First In First Out (FIFO) Queue data structure as a helper. If we're given the root node, we first queue it up, pop it out, "visit" the node (in our case, we're just printing its value), and then throw all of it's existing children nodes into the queue, starting with the left child.
+Look at that, we aren't even recursing! Instead, this solution relies on a First In First Out (FIFO) Queue data structure as a helper. *(Think of how lining up to order food works: the first person in line will reach the counter first. This is different from a Last In First Out (LIFO) Queue, which works more like an elevator: the most recent person to get in is able to get out first.)* If we're given the root node, we first queue it up, pop it out, "visit" the node (in our case, we're just printing its value), and then throw all of it's existing children nodes into the queue, starting with the left child.
 
 Upon the next iteration of the loop, that leftmost child pops out, and the same operation occurs. Because we're using a queue, the new child nodes of THIS current node are added to the end of the existing queue, and won't be processed until after everything on this level, which was enqueued earlier, is visited. All without recursion!
 
@@ -63,3 +63,35 @@ def levelOrder(self,root):
       if (curr.right is not None):
         queue.append(curr.right)
 ```
+
+First off, as good practice it's smart to check if the input even exists, or is non-null in this case. This allows the code to avoid attempting to process something undefined and throwing errors.
+
+The next line, `queue = [root]`, is straightforward enough, this is where we establish the beginnings of the algorithm by initializing the queue using our definitely-not-null root node. But wait, this isn't really a queue, persay; we're just using a Python list since this was initialized using square brackets. Ignore that for now, I'll explain this later!
+
+`while(queue):` manages the iterative looping over the tree, and the condition of simply 'queue' vs having some more involved logic of determining if the queue is empty or not is just another fun feature of using the language Python. If the queue is empty, evaluating it as a boolean will return false, just the same as executing something along the lines of queue.isEmpty() in another language.
+
+`curr = queue.pop(0)` is where we are able to squeeze queue-like functionality out of Python's list data structure. By popping the element at index 0, we're effectively dequeuing the first element and letting the remaining elements shift over by one to fill its place. In terms of absolute performance this may not be optimal, since the pop operation itself now has to shift its contents around. If I were approaching this problem with absolute performance in mind, it would be better to manually implement or import an existing queue object with pointers to the beginning and end elements that doesn't need to readjust all of its contents on each .pop() operation. However, for my purposes of simply getting something to produce the desired output, this works perfectly and is simpler.
+
+`print(curr.data, end=" ")` This is simply the "visiting" portion of the algorithm. One requirement of the challenge was to print the contents of the tree on a single line, with values delimited by spaces. In other languages such as Java or C which have separate print() and println() functions which print to the same line or print and move to the next line separately, this wouldn't require much thought. However, having only experience with Python's print() function and knowing that it always seemed to print a newline character meant I needed to find a way to call print() an undetermined number of times with a space on the end instead of a newline. Luckily, some quick research through the [Python documentation](https://docs.python.org/3/tutorial/inputoutput.html) provided a reasonable solution, the end=" " argument which allows the coder to define an alternate end character for the print statement other than a newline character!
+
+```python
+if (curr.left is not None):
+  queue.append(curr.left)
+if (curr.right is not None):
+  queue.append(curr.right)
+```
+The block above is pretty straightforward if you get familiar with the Python syntax (which I used earlier to check for the existence of the root node). Here, the code is checking to see if the left child node exists or not, and adding it to the queue if so. Same for the right.
+
+And that is all! If I were to run the full code on this tree below, the output would be a correct 3 2 5 1 4 7.
+
+![Example]({{ site.baseurl }}/images/bstexample.jpg "Example")
+
+----
+
+Full source code for my solution, as well as the problem statement provided by HackerRank, can be found [here](https://github.com/stern-shawn/HackerRank/tree/master/30DaysOfCode/23%20-%20BST%20Level-Order%20Traversal)!
+
+----
+
+Sources:
+
+[1] - Image from: <https://en.wikipedia.org/wiki/Tree_traversal>

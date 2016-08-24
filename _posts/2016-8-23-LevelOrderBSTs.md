@@ -5,9 +5,9 @@ tags: algorithms, python, hackerrank, problem-solving
 ---
 
 ### Some Backstory
-Back in June, [HackerRank](hackerrank.com) was running a 30 Days of Code challenge. Thinking that this would be a perfect opportunity to brush up on the Python skills that I had picked up on a rushed need-to-know-for-this-project basis over the last year or so, I signed up and committed to solving the daily problems.
+Back in June, [HackerRank](http://www.hackerrank.com) was running a 30 Days of Code challenge. Thinking that this would be a perfect opportunity to brush up on the Python skills that I had picked up on a rushed need-to-know-for-this-project basis over the last year or so, I signed up and committed to solving the daily problems.
 
-I've decided to go over a number of these challenges and my solutions going forward over the next few posts, as well as a series on some of the algorithm challenges and design projects I've been doing as part of the [FreeCodeCamp](freecodecamp.com) curriculum.
+I've decided to go over a number of these challenges and my solutions going forward over the next few posts, as well as a series on some of the algorithm challenges and design projects I've been doing as part of the [FreeCodeCamp](http://www.freecodecamp.com) curriculum.
 
 ### Getting to it
 Day 23 of 30 Days of Code brought back a concept from my second intro-level CS course: binary tree traversals. However, it came with a twist. Since having learned how to apply recursion, concepts like pre-order, in-order, and post-order traversals are naturally easy to think up and recode on the spot, but this challenge was asking for an implementation of Level-Order Traversal! Having never navigated a binary tree in this way, I was excited to figure out a solution, especially since a variant of this problem comes up in Cracking the Code Interview...
@@ -21,23 +21,45 @@ While the previously mentioned traversals typically drill down into a BST until 
 Another name for this method of navigating the data structure is a Breadth-first search, which comes up more frequently in graph theory. I sort of wish this had been introduced along with the other traversals, because it would've made learning BFS that much easier in my algorithms course!
 
 #### That's neat, how do we actually implement this?
+This one was a challenge to start but ultimately made a ton of sense. Having done all other traversals using recursive methods, my first instinct was to also tackle this problem in the same way.
 
-```Python
+After some time spent banging my head against the wall, and thinking that there was no way to do this purely recursively without some helper data structure to keep track of your position in the tree, I did some googling and ran across this pseudo-code on Wikipedia.
+
+```
+levelorder(root)
+  q ← empty queue
+  q.enqueue(root)
+  while (not q.isEmpty())
+    node ← q.dequeue()
+    visit(node)
+    if (node.left ≠ null)
+      q.enqueue(node.left)
+    if (node.right ≠ null)
+      q.enqueue(node.right)
+```
+
+Look at that, we aren't even recursing! Instead, this solution relies on a First In First Out (FIFO) Queue data structure as a helper. If we're given the root node, we first queue it up, pop it out, "visit" the node (in our case, we're just printing its value), and then throw all of it's existing children nodes into the queue, starting with the left child.
+
+Upon the next iteration of the loop, that leftmost child pops out, and the same operation occurs. Because we're using a queue, the new child nodes of THIS current node are added to the end of the existing queue, and won't be processed until after everything on this level, which was enqueued earlier, is visited. All without recursion!
+
+Pseudo-code and explanations in English are great, but problems are solved using real code. Let's take a look at how I interpreted this into Python as part of a Binary Search Tree Class implementation.
+
+```python
 def levelOrder(self,root):
-    # Perform a level-order traversal of the given root node
-    if root is not None:
-      # Establish a 'queue' starting with root
-      queue = [root]
-      while(queue):
-        # 'De-queue' first element
-        curr = queue.pop(0)
+  # Perform a level-order traversal of the given root node
+  if root is not None:
+    # Establish a 'queue' starting with root
+    queue = [root]
+    while(queue):
+      # 'De-queue' first element
+      curr = queue.pop(0)
 
-        # Print the current node on the same line using the 'end' argument to print
-        print(curr.data, end=" ")
+      # Print the current node on the same line, pad with a space
+      print(curr.data, end=" ")
 
-        # Enqueue any left/right children in order
-        if (curr.left is not None):
-          queue.append(curr.left)
-        if (curr.right is not None):
-          queue.append(curr.right)
+      # Enqueue any left/right children in order
+      if (curr.left is not None):
+        queue.append(curr.left)
+      if (curr.right is not None):
+        queue.append(curr.right)
 ```

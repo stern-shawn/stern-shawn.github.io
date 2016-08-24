@@ -84,7 +84,7 @@ The block above is pretty straightforward if you get familiar with the Python sy
 
 And that is all! If I were to run the full code on this tree below, the output would be a correct 3 2 5 1 4 7.
 
-![Example]({{ site.baseurl }}/images/bstexample.jpg "Example")
+![Example]({{ site.baseurl }}/images/bstexample.JPG "Example")
 
 ----
 

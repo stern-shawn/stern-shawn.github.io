@@ -15,7 +15,7 @@ Day 23 of 30 Days of Code brought back a concept from my second intro-level CS c
 #### What is a Level-Order Traversal anyway?
 While the previously mentioned traversals typically drill down into a BST until hitting the leaf nodes, the Level-Order traversal is unique in that it visits all nodes on a given level before descending to the next deepest level. Visually, you can think of it like below where the dashed line represents our path through the example tree from left to right, top to bottom:
 
-![BFS Diagram]({{ site.baseurl }}/images/Sorted_binary_tree_breadth-first_traversal.svg "BFS Diagram")
+![BFS Diagram](/images/Sorted_binary_tree_breadth-first_traversal.svg "BFS Diagram")
 [1]
 
 Another name for this method of navigating the data structure is a Breadth-first search, which comes up more frequently in graph theory. I sort of wish this had been introduced along with the other traversals, because it would've made learning BFS that much easier in my algorithms course!
@@ -44,7 +44,7 @@ Upon the next iteration of the loop, that leftmost child pops out, and the same 
 
 Pseudo-code and explanations in English are great, but problems are solved using real code. Let's take a look at how I interpreted this into Python as part of a Binary Search Tree Class implementation.
 
-```python
+{% highlight python %}
 def levelOrder(self,root):
   # Perform a level-order traversal of the given root node
   if root is not None:
@@ -54,7 +54,7 @@ def levelOrder(self,root):
       # 'De-queue' first element
       curr = queue.pop(0)
 
-      # Print the current node on the same line, pad with a space
+      # Print current node on same line, pad with a space
       print(curr.data, end=" ")
 
       # Enqueue any left/right children in order
@@ -62,7 +62,7 @@ def levelOrder(self,root):
         queue.append(curr.left)
       if (curr.right is not None):
         queue.append(curr.right)
-```
+{% endhighlight %}
 
 First off, as good practice it's smart to check if the input even exists, or is non-null in this case. This allows the code to avoid attempting to process something undefined and throwing errors.
 
@@ -74,17 +74,18 @@ The next line, `queue = [root]`, is straightforward enough, this is where we est
 
 `print(curr.data, end=" ")` This is simply the "visiting" portion of the algorithm. One requirement of the challenge was to print the contents of the tree on a single line, with values delimited by spaces. In other languages such as Java or C which have separate print() and println() functions which print to the same line or print and move to the next line separately, this wouldn't require much thought. However, having only experience with Python's print() function and knowing that it always seemed to print a newline character meant I needed to find a way to call print() an undetermined number of times with a space on the end instead of a newline. Luckily, some quick research through the [Python documentation](https://docs.python.org/3/tutorial/inputoutput.html) provided a reasonable solution, the end=" " argument which allows the coder to define an alternate end character for the print statement other than a newline character!
 
-```python
+{% highlight python %}
 if (curr.left is not None):
   queue.append(curr.left)
 if (curr.right is not None):
   queue.append(curr.right)
-```
+{% endhighlight %}
+
 The block above is pretty straightforward if you get familiar with the Python syntax (which I used earlier to check for the existence of the root node). Here, the code is checking to see if the left child node exists or not, and adding it to the queue if so. Same for the right.
 
 And that is all! If I were to run the full code on this tree below, the output would be a correct 3 2 5 1 4 7.
 
-![Example]({{ site.baseurl }}/images/bstexample.JPG "Example")
+![Example](/images/bstexample.jpg "Example")
 
 ----
 

@@ -8,4 +8,4 @@ Well, it looks like I've finally done it and hopped into the fray of software de
 
 Now... *let's do this*
 
-![Chickens](http://www.margaretwallace.com/wp-content/uploads/2014/04/hc6.jpg){: .center-image }
+![Chickens](http://www.margaretwallace.com/wp-content/uploads/2014/04/hc6.jpg)

@@ -9,7 +9,7 @@ permalink:        pretty
 title:            Shawn Stern
 tagline:          'Thoughts on EE, Algorithms, Design, and Lifting'
 description:      'A place where I store my ramblings and thought processes. Value uncertain. Made by <a href="https://stern-shawn.github.io/Portfolio/" target="_blank">me</a>.'
-url:              http://hyde.getpoole.com
+url:              stern-shawn.github.io
 baseurl:          /
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)

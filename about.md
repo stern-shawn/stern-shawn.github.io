@@ -10,7 +10,7 @@ In June 2016 I decided to separate from Intel and focus full-time on expanding m
 
 Hobbies outside of programming include:
 
-- Powerlifting
+- Weightlifting/Powerlifting
 - Kendo
 - Playing Electric Bass Guitar for my band
 - Hiking around the beautiful Pacific Northwest
@@ -18,7 +18,7 @@ Hobbies outside of programming include:
 
 ### More Information
 
-If you want to view more of my work, you can find my personal web development portfolio at <http://stern-shawn.github.io/Portfolio>. My full github repository is also available at <https://github.com/stern-shawn>!
+If you want to view more of my public work, my full github repository is available at <https://github.com/stern-shawn>!
 
 ### Contact me
 

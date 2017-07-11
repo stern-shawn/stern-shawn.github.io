@@ -7,8 +7,7 @@ permalink:        pretty
 
 # Setup
 title:            Shawn Stern
-tagline:          'Thoughts on EE, Algorithms, Design, and Lifting'
-description:      'A place where I store my ramblings and thought processes. Value uncertain. Made by <a href="https://stern-shawn.github.io/Portfolio/" target="_blank">me</a>.'
+tagline:          'Thoughts on JavaScript, React, Node, and everything in between'
 url:              stern-shawn.github.io
 baseurl:          /
 

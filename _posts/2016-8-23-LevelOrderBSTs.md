@@ -14,8 +14,7 @@ Day 23 of 30 Days of Code brought back a concept from my second intro-level CS c
 #### What is a Level-Order Traversal anyway?
 While the previously mentioned traversals typically drill down into a BST until hitting the leaf nodes, the Level-Order traversal is unique in that it visits all nodes on a given level before descending to the next deepest level. Visually, you can think of it like below where the dashed line represents our path through the example tree from left to right, top to bottom:
 
-![BFS Diagram](/images/Sorted_binary_tree_breadth-first_traversal.svg "BFS Diagram")
-[1]
+![BFS Diagram]({{ site.url }}{{ site.baseurl }}/assets/images/Sorted_binary_tree_breadth-first_traversal.svg "BFS Diagram"){: .align-center}
 
 Another name for this method of navigating the data structure is a Breadth-first search, which comes up more frequently in graph theory. I sort of wish this had been introduced along with the other traversals, because it would've made learning BFS that much easier in my algorithms course!
 
@@ -84,7 +83,7 @@ The block above is pretty straightforward if you get familiar with the Python sy
 
 And that is all! If I were to run the full code on this tree below, the output would be a correct 3 2 5 1 4 7.
 
-![Example](/images/bstexample.jpg "Example")
+![Example]({{ site.url }}{{ site.baseurl }}/assets/images/bstexample.jpg "Example"){: .align-center}
 
 ----
 

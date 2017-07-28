@@ -1,7 +1,6 @@
 ---
-layout: post
 title: Digging into algorithms... Level-Order Traversals!
-tags: algorithms, python, hackerrank, problem-solving
+tags: algorithms python hackerrank problem-solving
 ---
 
 ### Some Backstory

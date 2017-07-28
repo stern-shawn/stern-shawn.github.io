@@ -79,7 +79,7 @@ analytics:
 author:
   name             : "Shawn Stern"
   avatar           : "https://avatars1.githubusercontent.com/u/10067791?v=3&u=842d6de1e395a0a8926d570fc6ca62b022a47994&s=140" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "TBD."
+  bio              : "Full-Stack JS Developer and Electrical Engineer. Currently in a relationship with MERN. When I'm not programming you'll find me lifting or eating."
   location         : "Portland, OR"
   email            :
   uri              :
@@ -95,7 +95,7 @@ author:
   keybase          :
   instagram        :
   lastfm           :
-  linkedin         :
+  linkedin         : "shawn-stern-48496747"
   pinterest        :
   soundcloud       :
   stackoverflow    : # "123456/username" (the last part of your profile url, e.g. http://stackoverflow.com/users/123456/username)

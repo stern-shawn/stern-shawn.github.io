@@ -1,5 +1,5 @@
 import { graphql, Link } from 'gatsby'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Bio from '../components/bio'
 import Layout from '../components/layout'
@@ -21,8 +21,14 @@ const BlogIndex = ({ data }: Props) => {
   const siteTitle = data.site.siteMetadata.title
   const posts = data.allMarkdownRemark.edges
 
+  const [location, setLocation] = useState()
+
+  useEffect(() => {
+    setLocation(window.location)
+  })
+
   return (
-    <Layout location={window.location} title={siteTitle}>
+    <Layout location={location} title={siteTitle}>
       <SEO title="All posts" />
       <Bio />
       {posts.map((post: any) => {

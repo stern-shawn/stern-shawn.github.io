@@ -1,5 +1,5 @@
 import { graphql, Link } from 'gatsby'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Bio from '../components/bio'
 import Layout from '../components/layout'
@@ -23,8 +23,14 @@ const BlogPostTemplate = ({ data, pageContext }: Props) => {
   const siteTitle = data.site.siteMetadata.title
   const { previous, next } = pageContext
 
+  const [location, setLocation] = useState()
+
+  useEffect(() => {
+    setLocation(window.location)
+  })
+
   return (
-    <Layout location={window.location} title={siteTitle}>
+    <Layout location={location} title={siteTitle}>
       <SEO title={post.frontmatter.title} description={post.frontmatter.description || post.excerpt} />
       <h1
         style={{

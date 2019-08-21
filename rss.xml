@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[SternJS]]></title><description><![CDATA[A collection of my (mostly bad) ideas and ramblings.]]></description><link>https://stern-shawn.github.io</link><generator>RSS for Node</generator><lastBuildDate>Wed, 21 Aug 2019 22:22:20 GMT</lastBuildDate><item><title><![CDATA[Using Higher-Order Components in React]]></title><description><![CDATA[This repo is a simple example of studying HOCs and applying them to React-Redux based applications. In a nutshell, HOCs enable us to extend…]]></description><link>https://stern-shawn.github.io/higher-order-components/2017-7-11-HOCs/</link><guid isPermaLink="false">https://stern-shawn.github.io/higher-order-components/2017-7-11-HOCs/</guid><pubDate>Tue, 11 Jul 2017 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/stern-shawn/continued-education/tree/master/udemy/React-Redux/higher-order-components-0&quot;&gt;This&lt;/a&gt; repo is a simple example of studying HOCs and applying them to React-Redux based applications.&lt;/p&gt;
+&lt;p&gt;In a nutshell, HOCs enable us to extend the functionality of an existing component (generally we call the result an ‘Enhanced’ or ‘Composed’ component). While many devs may not be aware of what a HOC is, if they’ve ever used React-Redux, they have already used HOCs unknowingly!&lt;/p&gt;
+&lt;p&gt;The react-redux &lt;code class=&quot;language-text&quot;&gt;connect(mapStateToProps, mapDispatchToProps)(Component)&lt;/code&gt; pattern is an example of using the connect() HOC to extend a React component such that its &lt;code class=&quot;language-text&quot;&gt;this.props&lt;/code&gt; is actually connected to values and actions in the Redux store. Without this HOC, React-Rudux components wouldn’t be so easily connected to application state or be able to dispatch actions, which would make for a terrible development experience…&lt;/p&gt;
+&lt;h2&gt;HOCs for Auth&lt;/h2&gt;
+&lt;p&gt;In this particular example, I experimented with using HOCs to make it so users have to be signed in to view certain routes in a React application. For example, say I have a /resources page which has sensitive data, and I only want authenticated users to view it, how would we use a HOC to implement this?&lt;/p&gt;
+&lt;p&gt;Lets implement a HOC that would handle this for us (assume I’ve already implemented the Redux store, actions, etc so that there is an authentication variable which tracks user auth status):&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;js&quot;&gt;&lt;pre class=&quot;language-js&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; React&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; Component &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&apos;react&apos;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; connect &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&apos;react-redux&apos;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; browserHistory &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&apos;react-router&apos;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;default&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token parameter&quot;&gt;ComposedComponent&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Authentication&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;Component&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token function&quot;&gt;componentWillMount&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;token comment&quot;&gt;// Redirect user to home if not authenticated&lt;/span&gt;
+      &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;token keyword&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;props&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;authenticated&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        browserHistory&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&apos;/&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;// Add in an update hook so that if the user signs out&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;// (which will update the authentication prop) we run&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;// a check and do a forced redirect to home&lt;/span&gt;
+    &lt;span class=&quot;token function&quot;&gt;componentWillUpdate&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token parameter&quot;&gt;nextProps&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;!&lt;/span&gt;nextProps&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;authenticated&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        browserHistory&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&apos;/&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;token comment&quot;&gt;// Render the passed component, and pass down any&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;// additional properties using ES6 spread&lt;/span&gt;
+    &lt;span class=&quot;token function&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;ComposedComponent &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;...&lt;/span&gt;this&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;props&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;token keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;token function-variable function&quot;&gt;mapStateToProps&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token parameter&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&gt;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    authenticated&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; state&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;auth&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;authenticated&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+  &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;mapStateToProps&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;Authentication&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In a nutshell, the &lt;code class=&quot;language-text&quot;&gt;Authentication&lt;/code&gt; class exported by this HOC simply renders the passed component (say, our protected content component), while extending it with the &lt;code class=&quot;language-text&quot;&gt;componentWillMount()&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;componentWillUpdate()&lt;/code&gt; lifecycle hooks. The underlying component is rendered exactly the same way it would be without being wrapped in the HOC (unless the props passed using &lt;code class=&quot;language-text&quot;&gt;...this.props&lt;/code&gt; somehow manages to override a prop expected by &lt;code class=&quot;language-text&quot;&gt;ComposedComponent&lt;/code&gt;…).&lt;/p&gt;
+&lt;p&gt;Inside of the &lt;code class=&quot;language-text&quot;&gt;componentWillMount()&lt;/code&gt; hook, we check to see if the user is authenticated. If so, nothing averse happens and rendering continues as normal. If not, the HOC tells React-Router to redirect the user to the home page since they are not authorized to view the protected content.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;js&quot;&gt;&lt;pre class=&quot;language-js&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;&lt;span class=&quot;token function&quot;&gt;componentWillMount&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;token keyword&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;props&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;authenticated&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    browserHistory&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&apos;/&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Suppose the user is logged in, views the restricted content, and then logs out while still on the protected page? What should happen? Usually, they would be redirected to a home page or signin form to confirm that they have been successfully logged out. However, just using &lt;code class=&quot;language-text&quot;&gt;componentWillMount()&lt;/code&gt; will not accomplish this. This is where &lt;code class=&quot;language-text&quot;&gt;componentWillUpdate()&lt;/code&gt; kicks in. If the &lt;code class=&quot;language-text&quot;&gt;authenticated&lt;/code&gt; variable is changed, this will send new props to every component and trigger re-renders. &lt;code class=&quot;language-text&quot;&gt;componentWillMount()&lt;/code&gt; is passed a property called &lt;code class=&quot;language-text&quot;&gt;nextProps&lt;/code&gt; which lets us peek at the updated values and respond to it before the props are used. In this situation, we can peek at the new, incoming value of &lt;code class=&quot;language-text&quot;&gt;authenticated&lt;/code&gt;, and if it has been changed to &lt;code class=&quot;language-text&quot;&gt;false&lt;/code&gt;, redirect the user out of the protect area to Home.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;js&quot;&gt;&lt;pre class=&quot;language-js&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;&lt;span class=&quot;token function&quot;&gt;componentWillUpdate&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token parameter&quot;&gt;nextProps&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;!&lt;/span&gt;nextProps&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;authenticated&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    browserHistory&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&apos;/&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;But wait, how is our HOC even aware of the &lt;code class=&quot;language-text&quot;&gt;authenticated&lt;/code&gt; variable and its value? The answer is the &lt;code class=&quot;language-text&quot;&gt;connect()&lt;/code&gt; HOC that we see used when we return the &lt;code class=&quot;language-text&quot;&gt;Authentication&lt;/code&gt; component!&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;js&quot;&gt;&lt;pre class=&quot;language-js&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; connect &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&apos;react-redux&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token operator&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;token function-variable function&quot;&gt;mapStateToProps&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token parameter&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;=&gt;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  authenticated&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; state&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;authenticated&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;mapStateToProps&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;Authentication&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This component sounds great, but how do we actually make us of it in an application to protect a route? Here is a sample of how it would be employed in a very, very simple app:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;js&quot;&gt;&lt;pre class=&quot;language-js&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;&lt;span class=&quot;token operator&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;import&lt;/span&gt; requireAuth &lt;span class=&quot;token keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&apos;./components/require_auth&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token operator&quot;&gt;...&lt;/span&gt;
+ReactDOM&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;Provider store&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;createStoreWithMiddleware&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;reducers&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+    &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;Router history&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;browserHistory&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+      &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;Route path&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;/&quot;&lt;/span&gt; component&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;App&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+        &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;Route path&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;resources&quot;&lt;/span&gt; component&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;requireAuth&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;Resources&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;Route&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+      &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;Route&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+    &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;Router&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;
+  &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;/&lt;/span&gt;Provider&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+  document&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;getElementById&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&apos;app&apos;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Note that if the user navigates to &lt;code class=&quot;language-text&quot;&gt;/resources&lt;/code&gt;, the app will render not the &lt;code class=&quot;language-text&quot;&gt;Resources&lt;/code&gt; component directly, but the &lt;code class=&quot;language-text&quot;&gt;Authentication&lt;/code&gt; component (which we’ve imported as &lt;code class=&quot;language-text&quot;&gt;requireAuth()&lt;/code&gt;) with &lt;code class=&quot;language-text&quot;&gt;Resources&lt;/code&gt; as the child component to be wrapped.&lt;/p&gt;
+&lt;p&gt;And that’s a basic method of implementing authentication control in React-Redux using HOCs. Obviously this only covers how to protect content on the client side, and not the matter of actually establishing if the user is authenticated by communicating with the server and then putting that value into Redux. That will be covered in a later project more specific to that idea (hopefully using JWTs which I’m curious to learn).&lt;/p&gt;
+&lt;p&gt;If you’re interested in playing with the code, simply clone the &lt;a href=&quot;https://github.com/stern-shawn/continued-education/tree/master/udemy/React-Redux/higher-order-components-0&quot;&gt;referenced git repository&lt;/a&gt;, install deps using &lt;code class=&quot;language-text&quot;&gt;npm install&lt;/code&gt; or &lt;code class=&quot;language-text&quot;&gt;yarn add&lt;/code&gt;, run via &lt;code class=&quot;language-text&quot;&gt;npm start&lt;/code&gt;/&lt;code class=&quot;language-text&quot;&gt;yarn start&lt;/code&gt;, and visit &lt;code class=&quot;language-text&quot;&gt;localhost:8080&lt;/code&gt;.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Digging into algorithms... Level-Order Traversals!]]></title><description><![CDATA[Some Backstory Back in June, HackerRank was running a 30 Days of Code challenge. Thinking that this would be a perfect opportunity to brush…]]></description><link>https://stern-shawn.github.io/level-order-traversal/</link><guid isPermaLink="false">https://stern-shawn.github.io/level-order-traversal/</guid><pubDate>Tue, 23 Aug 2016 00:00:00 GMT</pubDate><content:encoded>&lt;h3&gt;Some Backstory&lt;/h3&gt;
+&lt;p&gt;Back in June, &lt;a href=&quot;http://www.hackerrank.com&quot;&gt;HackerRank&lt;/a&gt; was running a 30 Days of Code challenge. Thinking that this would be a perfect opportunity to brush up on the Python skills that I had picked up on a rushed need-to-know-for-this-project basis over the last year or so, I signed up and committed to solving the daily problems.&lt;/p&gt;
+&lt;p&gt;I’ve decided to go over a number of these challenges and my solutions going forward over the next few posts, as well as a series on some of the algorithm challenges and design projects I’ve been doing as part of the &lt;a href=&quot;http://www.freecodecamp.com&quot;&gt;FreeCodeCamp&lt;/a&gt; curriculum.&lt;/p&gt;
+&lt;h3&gt;Getting to it&lt;/h3&gt;
+&lt;p&gt;Day 23 of 30 Days of Code brought back a concept from my second intro-level CS course: binary tree traversals. However, it came with a twist. Since having learned how to apply recursion, concepts like pre-order, in-order, and post-order traversals are naturally easy to think up and recode on the spot, but this challenge was asking for an implementation of Level-Order Traversal! Having never navigated a binary tree in this way, I was excited to figure out a solution, especially since a variant of this problem comes up in Cracking the Code Interview…&lt;/p&gt;
+&lt;h4&gt;What is a Level-Order Traversal anyway?&lt;/h4&gt;
+&lt;p&gt;While the previously mentioned traversals typically drill down into a BST until hitting the leaf nodes, the Level-Order traversal is unique in that it visits all nodes on a given level before descending to the next deepest level. Visually, you can think of it like below where the dashed line represents our path through the example tree from left to right, top to bottom:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/5003576bae03142acb3ab5fc1d32cd12/Sorted_binary_tree_breadth-first_traversal.svg&quot; alt=&quot;BFS Diagram&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Another name for this method of navigating the data structure is a Breadth-first search, which comes up more frequently in graph theory. I sort of wish this had been introduced along with the other traversals, because it would’ve made learning BFS that much easier in my algorithms course!&lt;/p&gt;
+&lt;h4&gt;That’s neat, how do we actually implement this?&lt;/h4&gt;
+&lt;p&gt;This one was a challenge to start but ultimately made a ton of sense. Having done all other traversals using recursive methods, my first instinct was to also tackle this problem in the same way.&lt;/p&gt;
+&lt;p&gt;After some time spent banging my head against the wall, and thinking that there was no way to do this purely recursively without some helper data structure to keep track of your position in the tree, I did some googling and ran across this pseudo-code on Wikipedia.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;py&quot;&gt;&lt;pre class=&quot;language-py&quot;&gt;&lt;code class=&quot;language-py&quot;&gt;levelorder&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  q ← empty queue
+  q&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;enqueue&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; q&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;isEmpty&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    node ← q&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;dequeue&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    visit&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;node&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;node&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;left ≠ null&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+      q&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;enqueue&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;node&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;left&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;node&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;right ≠ null&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+      q&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;enqueue&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;node&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;right&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Look at that, we aren’t even recursing! Instead, this solution relies on a First In First Out (FIFO) Queue data structure as a helper. &lt;em&gt;(Think of how lining up to order food works: the first person in line will reach the counter first. This is different from a Last In First Out (LIFO) Queue, which works more like an elevator: the most recent person to get in is able to get out first.)&lt;/em&gt; If we’re given the root node, we first queue it up, pop it out, “visit” the node (in our case, we’re just printing its value), and then throw all of it’s existing children nodes into the queue, starting with the left child.&lt;/p&gt;
+&lt;p&gt;Upon the next iteration of the loop, that leftmost child pops out, and the same operation occurs. Because we’re using a queue, the new child nodes of THIS current node are added to the end of the existing queue, and won’t be processed until after everything on this level, which was enqueued earlier, is visited. All without recursion!&lt;/p&gt;
+&lt;p&gt;Pseudo-code and explanations in English are great, but problems are solved using real code. Let’s take a look at how I interpreted this into Python as part of a Binary Search Tree Class implementation.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;py&quot;&gt;&lt;pre class=&quot;language-py&quot;&gt;&lt;code class=&quot;language-py&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;levelOrder&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; root&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token comment&quot;&gt;# Perform a level-order traversal of the given root node if possible&lt;/span&gt;
+  &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; root &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;# Establish a &apos;queue&apos; starting with root&lt;/span&gt;
+    queue &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;root&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;token comment&quot;&gt;# Iterate over the queue (walk the tree) until we empty it (we&apos;re done!)&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;queue&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token comment&quot;&gt;# De-queue first element&lt;/span&gt;
+      curr &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; queue&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;pop&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+      &lt;span class=&quot;token comment&quot;&gt;# Print current node on same line, pad with a space&lt;/span&gt;
+      &lt;span class=&quot;token keyword&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;data&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; end&lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+
+      &lt;span class=&quot;token comment&quot;&gt;# Enqueue any left/right children in that order&lt;/span&gt;
+      &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;left &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        queue&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;left&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;right &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        queue&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;right&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;First off, as good practice it’s smart to check if the input even exists, or is non-null in this case. This allows the code to avoid attempting to process something undefined and throwing errors.&lt;/p&gt;
+&lt;p&gt;The next line, &lt;code class=&quot;language-text&quot;&gt;queue = [root]&lt;/code&gt;, is straightforward enough, this is where we establish the beginnings of the algorithm by initializing the queue using our definitely-not-null root node. But wait, this isn’t really a queue, persay; we’re just using a Python list since this was initialized using square brackets. Ignore that for now, I’ll explain this later!&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;while(queue):&lt;/code&gt; manages the iterative looping over the tree, and the condition of simply ‘queue’ vs having some more involved logic of determining if the queue is empty or not is just another fun feature of using the language Python. If the queue is empty, evaluating it as a boolean will return false, just the same as executing something along the lines of queue.isEmpty() in another language.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;curr = queue.pop(0)&lt;/code&gt; is where we are able to squeeze queue-like functionality out of Python’s list data structure. By popping the element at index 0, we’re effectively dequeuing the first element and letting the remaining elements shift over by one to fill its place. In terms of absolute performance this may not be optimal, since the pop operation itself now has to shift its contents around. If I were approaching this problem with absolute performance in mind, it would be better to manually implement or import an existing queue object with pointers to the beginning and end elements that doesn’t need to readjust all of its contents on each .pop() operation. However, for my purposes of simply getting something to produce the desired output, this works perfectly and is simpler.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;print(curr.data, end=&amp;quot; &amp;quot;)&lt;/code&gt; This is simply the “visiting” portion of the algorithm. One requirement of the challenge was to print the contents of the tree on a single line, with values delimited by spaces. In other languages such as Java or C which have separate print() and println() functions which print to the same line or print and move to the next line separately, this wouldn’t require much thought. However, having only experience with Python’s print() function and knowing that it always seemed to print a newline character meant I needed to find a way to call print() an undetermined number of times with a space on the end instead of a newline. Luckily, some quick research through the &lt;a href=&quot;https://docs.python.org/3/tutorial/inputoutput.html&quot;&gt;Python documentation&lt;/a&gt; provided a reasonable solution, the end=” ” argument which allows the coder to define an alternate end character for the print statement other than a newline character!&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;py&quot;&gt;&lt;pre class=&quot;language-py&quot;&gt;&lt;code class=&quot;language-py&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;left &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  queue&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;left&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;right &lt;span class=&quot;token keyword&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;token boolean&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  queue&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;append&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;curr&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;right&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The block above is pretty straightforward if you get familiar with the Python syntax (which I used earlier to check for the existence of the root node). Here, the code is checking to see if the left child node exists or not, and adding it to the queue if so. Same for the right.&lt;/p&gt;
+&lt;p&gt;And that is all! If I were to run the full code on this tree below, the output would be a correct 3 2 5 1 4 7.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto;  max-width: 320px;&quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/1f645fde6f083717059a2d748d607785/f562b/bst_example.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 73.125%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAPABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEF/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhADEAAAAd1CQL//xAAXEAEBAQEAAAAAAAAAAAAAAAABABAR/9oACAEBAAEFAm4Trf/EABQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQMBAT8BP//EABQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8BP//EABQQAQAAAAAAAAAAAAAAAAAAACD/2gAIAQEABj8CX//EABsQAAICAwEAAAAAAAAAAAAAAAABESEQMUFR/9oACAEBAAE/IVWosWxYdbqeCrwY/9oADAMBAAIAAwAAABAjD//EABYRAQEBAAAAAAAAAAAAAAAAABEBEP/aAAgBAwEBPxBrn//EABQRAQAAAAAAAAAAAAAAAAAAABD/2gAIAQIBAT8QP//EABsQAAIDAQEBAAAAAAAAAAAAAAERADFBIVFh/9oACAEBAAE/ECAgGwFRVIY+ywYFZH0H0KPpCO82AYZFYJ//2Q==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Example&quot;
+        title=&quot;Example&quot;
+        src=&quot;/static/1f645fde6f083717059a2d748d607785/f562b/bst_example.jpg&quot;
+        srcset=&quot;/static/1f645fde6f083717059a2d748d607785/8ee9c/bst_example.jpg 148w,
+/static/1f645fde6f083717059a2d748d607785/ebbe7/bst_example.jpg 295w,
+/static/1f645fde6f083717059a2d748d607785/f562b/bst_example.jpg 320w&quot;
+        sizes=&quot;(max-width: 320px) 100vw, 320px&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Full source code for my solution, as well as the problem statement provided by HackerRank, can be found &lt;a href=&quot;https://github.com/stern-shawn/HackerRank/tree/master/30DaysOfCode/23%20-%20BST%20Level-Order%20Traversal&quot;&gt;here&lt;/a&gt;!&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Sources:&lt;/p&gt;
+&lt;p&gt;[1] - Image from: &lt;a href=&quot;https://en.wikipedia.org/wiki/Tree_traversal&quot;&gt;https://en.wikipedia.org/wiki/Tree_traversal&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[First Blog Post!]]></title><description><![CDATA[Well, it looks like I’ve finally done it and hopped into the fray of software development. At a recent ReactJS meetup I heard that the next…]]></description><link>https://stern-shawn.github.io/real-hello-world/</link><guid isPermaLink="false">https://stern-shawn.github.io/real-hello-world/</guid><pubDate>Wed, 29 Jun 2016 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Well, it looks like I’ve finally done it and hopped into the fray of software development. At a recent ReactJS meetup I heard that the next logical course of action was to start blogging about it, and I’m really in dire need of some sort of journal to keep tabs on my work, so here we are! I’ll be retroactively documenting some of the projects I’ve been working on at &lt;a href=&quot;https://www.freecodecamp.com&quot;&gt;FreeCodeCamp&lt;/a&gt; the last couple weeks and keeping tabs on future work here as well.&lt;/p&gt;
+&lt;p&gt;Now… &lt;em&gt;let’s do this&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://www.margaretwallace.com/wp-content/uploads/2014/04/hc6.jpg&quot; alt=&quot;Chickens&quot;&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[New Beginnings]]></title><description><![CDATA[Far far away, behind the word mountains, far from the countries Vokalia and
+Consonantia, there live the blind texts. Separated they live in…]]></description><link>https://stern-shawn.github.io/new-beginnings/</link><guid isPermaLink="false">https://stern-shawn.github.io/new-beginnings/</guid><pubDate>Thu, 28 May 2015 22:40:32 GMT</pubDate><content:encoded>&lt;p&gt;Far far away, behind the word mountains, far from the countries Vokalia and
+Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
+right at the coast of the Semantics, a large language ocean. A small river named
+Duden flows by their place and supplies it with the necessary regelialia.&lt;/p&gt;
+&lt;h2&gt;On deer horse aboard tritely yikes and much&lt;/h2&gt;
+&lt;p&gt;The Big Oxmox advised her not to do so, because there were thousands of bad
+Commas, wild Question Marks and devious Semikoli, but the Little Blind Text
+didn’t listen. She packed her seven versalia, put her initial into the belt and
+made herself on the way.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This however showed weasel&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Well uncritical so misled&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;this is very interesting&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Goodness much until that fluid owl&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;When she reached the first hills of the &lt;strong&gt;Italic Mountains&lt;/strong&gt;, she had a last
+view back on the skyline of her hometown &lt;em&gt;Bookmarksgrove&lt;/em&gt;, the headline of
+&lt;a href=&quot;http://google.com&quot;&gt;Alphabet Village&lt;/a&gt; and the subline of her own road, the Line
+Lane. Pityful a rhetoric question ran over her cheek, then she continued her
+way. On her way she met a copy.&lt;/p&gt;
+&lt;h3&gt;Overlaid the jeepers uselessly much excluding&lt;/h3&gt;
+&lt;p&gt;But nothing the copy said could convince her and so it didn’t take long until a
+few insidious Copy Writers ambushed her, made her drunk with
+&lt;a href=&quot;http://google.com&quot;&gt;Longe and Parole&lt;/a&gt; and dragged her into their agency, where
+they abused her for their projects again and again. And if she hasn’t been
+rewritten, then they are still using her.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Far far away, behind the word mountains, far from the countries Vokalia and
+Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
+right at the coast of the Semantics, a large language ocean.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;It is a paradisematic country, in which roasted parts of sentences fly into your
+mouth. Even the all-powerful Pointing has no control about the blind texts it is
+an almost unorthographic life One day however a small line of blind text by the
+name of Lorem Ipsum decided to leave for the far World of Grammar.&lt;/p&gt;
+&lt;h3&gt;According a funnily until pre-set or arrogant well cheerful&lt;/h3&gt;
+&lt;p&gt;The Big Oxmox advised her not to do so, because there were thousands of bad
+Commas, wild Question Marks and devious Semikoli, but the Little Blind Text
+didn’t listen. She packed her seven versalia, put her initial into the belt and
+made herself on the way.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;So baboon this&lt;/li&gt;
+&lt;li&gt;Mounted militant weasel gregariously admonishingly straightly hey&lt;/li&gt;
+&lt;li&gt;Dear foresaw hungry and much some overhung&lt;/li&gt;
+&lt;li&gt;Rash opossum less because less some amid besides yikes jeepers frenetic
+impassive fruitlessly shut&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;When she reached the first hills of the Italic Mountains, she had a last view
+back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet
+Village and the subline of her own road, the Line Lane. Pityful a rhetoric
+question ran over her cheek, then she continued her way. On her way she met a
+copy.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The copy warned the Little Blind Text, that where it came from it would have
+been rewritten a thousand times and everything that was left from its origin
+would be the word “and” and the Little Blind Text should turn around and
+return to its own, safe country.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;But nothing the copy said could convince her and so it didn’t take long until a
+few insidious Copy Writers ambushed her, made her drunk with Longe and Parole
+and dragged her into their agency, where they abused her for their projects
+again and again. And if she hasn’t been rewritten, then they are still using
+her. Far far away, behind the word mountains, far from the countries Vokalia and
+Consonantia, there live the blind texts.&lt;/p&gt;
+&lt;h4&gt;Silent delightfully including because before one up barring chameleon&lt;/h4&gt;
+&lt;p&gt;Separated they live in Bookmarksgrove right at the coast of the Semantics, a
+large language ocean. A small river named Duden flows by their place and
+supplies it with the necessary regelialia. It is a paradisematic country, in
+which roasted parts of sentences fly into your mouth.&lt;/p&gt;
+&lt;p&gt;Even the all-powerful Pointing has no control about the blind texts it is an
+almost unorthographic life One day however a small line of blind text by the
+name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox
+advised her not to do so, because there were thousands of bad Commas, wild
+Question Marks and devious Semikoli, but the Little Blind Text didn’t listen.&lt;/p&gt;
+&lt;h5&gt;Wherever far wow thus a squirrel raccoon jeez jaguar this from along&lt;/h5&gt;
+&lt;p&gt;She packed her seven versalia, put her initial into the belt and made herself on
+the way. When she reached the first hills of the Italic Mountains, she had a
+last view back on the skyline of her hometown Bookmarksgrove, the headline of
+Alphabet Village and the subline of her own road, the Line Lane. Pityful a
+rhetoric question ran over her cheek, then she continued her way. On her way she
+met a copy.&lt;/p&gt;
+&lt;h6&gt;Slapped cozy a that lightheartedly and far&lt;/h6&gt;
+&lt;p&gt;The copy warned the Little Blind Text, that where it came from it would have
+been rewritten a thousand times and everything that was left from its origin
+would be the word “and” and the Little Blind Text should turn around and return
+to its own, safe country. But nothing the copy said could convince her and so it
+didn’t take long until a few insidious Copy Writers ambushed her, made her drunk
+with Longe and Parole and dragged her into their agency, where they abused her
+for their projects again and again.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[My Second Post!]]></title><description><![CDATA[Wow! I love blogging so much already. Did you know that “despite its name, salted duck eggs can also be made from
+chicken eggs, though the…]]></description><link>https://stern-shawn.github.io/my-second-post/</link><guid isPermaLink="false">https://stern-shawn.github.io/my-second-post/</guid><pubDate>Wed, 06 May 2015 23:46:37 GMT</pubDate><content:encoded>&lt;p&gt;Wow! I love blogging so much already.&lt;/p&gt;
+&lt;p&gt;Did you know that “despite its name, salted duck eggs can also be made from
+chicken eggs, though the taste and texture will be somewhat different, and the
+egg yolk will be less rich.”?
+(&lt;a href=&quot;http://en.wikipedia.org/wiki/Salted_duck_egg&quot;&gt;Wikipedia Link&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;Yeah, I didn’t either.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Hello World]]></title><description><![CDATA[This is my first post on my new fake blog! How exciting! I’m sure I’ll write a lot more interesting things in the future. Oh, and here’s a…]]></description><link>https://stern-shawn.github.io/hello-world/</link><guid isPermaLink="false">https://stern-shawn.github.io/hello-world/</guid><pubDate>Fri, 01 May 2015 22:12:03 GMT</pubDate><content:encoded>&lt;p&gt;This is my first post on my new fake blog! How exciting!&lt;/p&gt;
+&lt;p&gt;I’m sure I’ll write a lot more interesting things in the future.&lt;/p&gt;
+&lt;p&gt;Oh, and here’s a great quote from this Wikipedia on
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Salted_duck_egg&quot;&gt;salted duck eggs&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A salted duck egg is a Chinese preserved food product made by soaking duck
+eggs in brine, or packing each egg in damp, salted charcoal. In Asian
+supermarkets, these eggs are sometimes sold covered in a thick layer of salted
+charcoal paste. The eggs may also be sold with the salted paste removed,
+wrapped in plastic, and vacuum packed. From the salt curing process, the
+salted duck eggs have a briny aroma, a gelatin-like egg white and a
+firm-textured, round yolk that is bright orange-red in color.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto;  max-width: 590px;&quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/8058f3f26913fea3b6a89a73344fe94a/2b40c/salty_egg.jpg&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 75%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAPABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMB/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAEEBf/aAAwDAQACEAMQAAABgik0dXC//8QAGRABAAMBAQAAAAAAAAAAAAAAAQACEhEy/9oACAEBAAEFAkqW2DlnRj73yf/EABcRAQADAAAAAAAAAAAAAAAAAAAREkH/2gAIAQMBAT8B1WX/xAAWEQEBAQAAAAAAAAAAAAAAAAAAEQL/2gAIAQIBAT8Bi6f/xAAbEAABBAMAAAAAAAAAAAAAAAAAAQIRISIxMv/aAAgBAQAGPwK9GNocyS8hCj//xAAcEAADAQACAwAAAAAAAAAAAAABESEAMUGBobH/2gAIAQEAAT8hsTTH2wx5gg2ZgM8d5JIfmMRAIe//2gAMAwEAAgADAAAAEMgv/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQARIf/aAAgBAwEBPxARwyusv//EABgRAAIDAAAAAAAAAAAAAAAAAAABESFR/9oACAECAQE/EFoktI//xAAcEAEBAAIDAQEAAAAAAAAAAAABEQAxIWGBQeH/2gAIAQEAAT8QRswtDR5g4a7R5C/RHFM3BKk6zThoVp3lEYcnjGIYES7/ACZ//9k=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Chinese Salty Egg&quot;
+        title=&quot;Chinese Salty Egg&quot;
+        src=&quot;/static/8058f3f26913fea3b6a89a73344fe94a/c739e/salty_egg.jpg&quot;
+        srcset=&quot;/static/8058f3f26913fea3b6a89a73344fe94a/8ee9c/salty_egg.jpg 148w,
+/static/8058f3f26913fea3b6a89a73344fe94a/ebbe7/salty_egg.jpg 295w,
+/static/8058f3f26913fea3b6a89a73344fe94a/c739e/salty_egg.jpg 590w,
+/static/8058f3f26913fea3b6a89a73344fe94a/5413e/salty_egg.jpg 885w,
+/static/8058f3f26913fea3b6a89a73344fe94a/4efde/salty_egg.jpg 1180w,
+/static/8058f3f26913fea3b6a89a73344fe94a/2b40c/salty_egg.jpg 2048w&quot;
+        sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;</content:encoded></item></channel></rss>

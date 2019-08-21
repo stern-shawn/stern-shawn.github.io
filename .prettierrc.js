@@ -1,9 +1,0 @@
-module.exports = {
-  arrowParens: 'always',
-  endOfLine: 'lf',
-  printWidth: 120,
-  semi: false,
-  singleQuote: true,
-  tabWidth: 2,
-  trailingComma: 'es5',
-}

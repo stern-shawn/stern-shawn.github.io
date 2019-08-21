@@ -1,5 +1,5 @@
 ---
-title: Digging into algorithms... Level-Order Traversals!
+title: Digging into algorithms... Level-Order Traversals
 date: '2016-08-23T00:00:00.069Z'
 description: 'Binary search tree traversals'
 ---

@@ -25,12 +25,13 @@ const Layout = ({ location, title, children }: Props) => {
         <Link
           style={{
             boxShadow: `none`,
+            fontFamily: `Permanent Marker,cursive`,
             textDecoration: `none`,
             color: `inherit`,
           }}
           to={`/`}
         >
-          {title}
+          {`< ${title} />`}
         </Link>
       </h1>
     )
@@ -38,7 +39,7 @@ const Layout = ({ location, title, children }: Props) => {
     header = (
       <h3
         style={{
-          fontFamily: `Montserrat, sans-serif`,
+          fontFamily: `Permanent Marker,cursive`,
           marginTop: 0,
         }}
       >
@@ -50,7 +51,7 @@ const Layout = ({ location, title, children }: Props) => {
           }}
           to={`/`}
         >
-          {title}
+          {`< ${title} />`}
         </Link>
       </h3>
     )

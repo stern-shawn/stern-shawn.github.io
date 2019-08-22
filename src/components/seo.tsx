@@ -72,7 +72,9 @@ const SEO = ({ description, lang, meta, title }: Props) => {
           content: metaDescription,
         },
       ].concat(meta || [])}
-    />
+    >
+      <link href="https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap" rel="stylesheet" />
+    </Helmet>
   )
 }
 

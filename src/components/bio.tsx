@@ -55,7 +55,8 @@ const Bio = () => {
         }}
       />
       <p>
-        Written by <strong>{author}</strong> who lives and works in Portland building useful things.
+        <strong>{author.split(' ')[0]}</strong> is a software engineer based out of Portland, OR with a love for Olympic
+        Weightlifting.
         {` `}
         <a href={`https://twitter.com/${social.twitter}`}>You should follow him on Twitter</a>
       </p>
